@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:broker="http://activemq.apache.org/schema/core"
+	   xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
+    
+    <!-- ========================= ActiveMQ Broker (Embedded) ========================= -->
+    
+	<broker:broker id="broker" useJmx="false" persistent="false" dataDirectory="target/activemq">
+		<broker:transportConnectors>
+			<broker:transportConnector uri="tcp://localhost:0" />
+		</broker:transportConnectors>
+	</broker:broker>
+	
+	<bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
+		<property name="brokerURL" value="vm://localhost" />
+	</bean>
+	
+	
+	<!-- ========================= ActiveMQ Broker (Remote) ========================= 
+	
+	<bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+	   <property name="brokerURL" value="${activemq.brokerURL}" />
+	</bean>
+	
+	<bean id="pooledConnectionFactory" class="org.apache.activemq.pool.PooledConnectionFactory" init-method="start" destroy-method="stop">
+	   <property name="maxConnections" value="${activemq.maxConnections}" />
+	   <property name="connectionFactory" ref="jmsConnectionFactory" />
+	</bean>
+	
+	<bean id="jmsConfig" class="org.apache.camel.component.jms.JmsConfiguration">
+	   <property name="connectionFactory" ref="pooledConnectionFactory"/>
+	   <property name="concurrentConsumers" value="${activemq.concurrentConsumers}"/>
+	</bean>
+	
+	<bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
+	    <property name="configuration" ref="jmsConfig"/>
+	</bean>
+	-->
+	
+</beans>

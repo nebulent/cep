@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns="urn:nebulent:schema:software:cep:events:1.0"
+	targetNamespace="urn:nebulent:schema:software:cep:events:1.0"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	<!-- ====================== Monitors ==========================
+	
+	<xs:element name="DatabaseRetentionMonitor">
+		<xs:complexType>
+			<xs:attribute name="applicationID" type="xs:string" use="required" />
+			<xs:attribute name="host" type="xs:string" use="required" />
+			<xs:attribute name="loginRaisedPercentageThreshold" type="xs:double" use="required" />
+			<xs:attribute name="cpuRaisedPercentageThreshold" type="xs:double" use="required" />
+			<xs:attribute name="loginCaptureInterval" type="xs:string" use="required" />
+			<xs:attribute name="cpuCaptureInterval" type="xs:string" use="required" />
+			<xs:attribute name="loginCaptureFromPastInterval" type="xs:string" use="required" />
+			<xs:attribute name="cpuCaptureFromPastInterval" type="xs:string" use="required" />
+			<xs:attribute name="slowQueriesThreshold" type="xs:int" use="required" />
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="ApplicationDownMonitor">
+		<xs:complexType>
+			<xs:attribute name="applicationID" type="xs:string" use="required" />
+			<xs:attribute name="host" type="xs:string" use="required" />
+			<xs:attribute name="freeMemoryPercentageThreshold" type="xs:int" use="required" />
+			<xs:attribute name="textContains" type="xs:string" use="required" />
+			<xs:attribute name="onInterval" type="xs:string" use="required" />
+		</xs:complexType>
+	</xs:element>
+	
+	======-->
+	
+	<!-- ====================== Monitor Events ========================== -->
+	
+	<xs:complexType name="BaseSysLogEvent">
+		<xs:sequence>
+			<xs:element name="source" type="xs:string" minOccurs="1" maxOccurs="1"/>
+			<xs:element name="criticality">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="Failure"/>
+						<xs:enumeration value="Problem"/>
+						<xs:enumeration value="Warning"/>
+						<xs:enumeration value="Info"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="message" type="xs:string" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="host" type="xs:string" use="required" />
+		<xs:attribute name="programName" type="xs:string" use="required" />
+		<xs:attribute name="logDate" type="xs:dateTime" use="required" />
+	</xs:complexType>
+	
+	<xs:element name="APIProbeSysLogEvent">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="BaseSysLogEvent">
+					<xs:sequence>
+						<xs:element name="ciscoEventTag" type="xs:string" minOccurs="1" maxOccurs="1"/>
+					</xs:sequence>
+					<xs:attribute name="up" type="xs:boolean" use="required" />
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="DBWaitEvent">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="BaseSysLogEvent">
+					<xs:sequence>
+						<xs:element name="event" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					</xs:sequence>
+					<xs:attribute name="program" type="xs:string" use="required" />
+					<xs:attribute name="machine" type="xs:string" use="required" />
+					<xs:attribute name="seconds_in_wait" type="xs:int" use="required" />
+					<xs:attribute name="minutesInWait" type="xs:int" use="required" />
+					<xs:attribute name="sid" type="xs:int" use="required" />
+					<xs:attribute name="spid" type="xs:int" use="required" />
+					<xs:attribute name="serial" type="xs:int" use="required" />
+					<xs:attribute name="serialNumber" type="xs:int" use="required" />
+					<xs:attribute name="status" type="xs:string" use="required" />
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="JMXApplicationAlertEvent">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="BaseSysLogEvent">
+					<xs:sequence>
+						<xs:element name="developer" type="xs:string" minOccurs="0" maxOccurs="1"/>
+					</xs:sequence>
+					<!-- Thu Feb 28 08:41:28 EST 2013 -->
+					<xs:attribute name="lastAlertDate" type="xs:dateTime" use="required" />
+					<xs:attribute name="lastClearDate" type="xs:dateTime" use="required" />
+					<xs:attribute name="name" type="xs:string" use="required" />
+					<xs:attribute name="alertCount" type="xs:int" use="required" />
+					<xs:attribute name="clearCount" type="xs:int" use="required" />
+					<xs:attribute name="active" type="xs:boolean" use="required" />
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="LoginEvent">
+		<xs:complexType>
+			<xs:attribute name="applicationID" type="xs:string" use="required" />
+			<xs:attribute name="host" type="xs:string" use="required" />
+			<xs:attribute name="userName" type="xs:string" use="required" />
+			<xs:attribute name="occurredOn" type="xs:dateTime" use="required" />
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="LoginCountEvent">
+		<xs:complexType>
+			<xs:attribute name="applicationID" type="xs:string" use="required" />
+			<xs:attribute name="host" type="xs:string" use="required" />
+			<xs:attribute name="numberOfLogins" type="xs:long" />
+			<xs:attribute name="occurredOn" type="xs:dateTime" use="required" />
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="AppServerHighCPUEvent">
+		<xs:complexType>
+			<xs:attribute name="applicationID" type="xs:string" use="required" />
+			<xs:attribute name="host" type="xs:string" use="required" />
+			<xs:attribute name="cpuPerc" type="xs:double" use="required" />
+			<xs:attribute name="idlePerc" type="xs:double" use="required" />
+			<xs:attribute name="occurredOn" type="xs:dateTime" use="required" />
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="DatabaseSlowQueryEvent">
+		<xs:complexType>
+			<xs:attribute name="databaseName" type="xs:string" use="required" />
+			<xs:attribute name="host" type="xs:string" use="required" />
+			<xs:attribute name="numberOfQueries" type="xs:int" use="required" />
+			<xs:attribute name="occurredOn" type="xs:dateTime" use="required" />
+		</xs:complexType>
+	</xs:element>
+	
+	<!--  -->
+	
+	<xs:element name="AppServerHighMemoryEvent">
+		<xs:complexType>
+			<xs:attribute name="applicationID" type="xs:string" use="required" />
+			<xs:attribute name="host" type="xs:string" use="required" />
+			<xs:attribute name="freePerc" type="xs:double" use="required" />
+			<xs:attribute name="used" type="xs:double" use="required" />
+			<xs:attribute name="free" type="xs:double" use="required" />
+			<xs:attribute name="occurredOn" type="xs:dateTime" use="required" />
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="AppLogEvent">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="content" type="xs:string" minOccurs="1" maxOccurs="1"/>
+			</xs:sequence>
+			<xs:attribute name="applicationID" type="xs:string" use="required" />
+			<xs:attribute name="host" type="xs:string" use="required" />
+			<xs:attribute name="occurredOn" type="xs:dateTime" use="required" />
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:cxf="http://cxf.apache.org/core"
+	   xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	   xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
+       http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd">
+	
+	<!-- ========================= Rest Service Clients. ========================= -->
+	
+	<jaxrs:server id="restAPI" address="/" staticSubresourceResolution="true">
+		<jaxrs:serviceBeans>
+			<ref bean="ajaxService" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+		</jaxrs:providers>
+		<jaxrs:features>
+			<cxf:logging/>
+		</jaxrs:features>
+	</jaxrs:server>
+	
+	<bean id="ajaxService" class="com.nebulent.cep.web.rest.AjaxService">
+		<property name="alertResource" ref="alertRestService"/>
+		<property name="monitorResource" ref="monitorRestService"/>
+	</bean>
+
+    <jaxrs:client id="alertRestService" address="${rest.restServiceClient.uri}"
+            serviceClass="com.nebulent.cep.service.resource.AlertResource" inheritHeaders="true">
+        <jaxrs:providers>
+        	<bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+        </jaxrs:providers>
+    </jaxrs:client>
+    
+    <jaxrs:client id="monitorRestService" address="${rest.restServiceClient.uri}"
+            serviceClass="com.nebulent.cep.service.resource.MonitorResource" inheritHeaders="true">
+        <jaxrs:providers>
+        	<bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+        </jaxrs:providers>
+    </jaxrs:client>
+    
+    <jaxrs:client id="cepRestService" address="${rest.restServiceClient.uri}"
+            serviceClass="com.nebulent.cep.service.resource.CepResource" inheritHeaders="true">
+        <jaxrs:providers>
+        	<bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+        </jaxrs:providers>
+    </jaxrs:client>
+</beans>

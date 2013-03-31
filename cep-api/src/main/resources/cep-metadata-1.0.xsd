@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified" xmlns="urn:nebulent:schema:software:cep:metadata:1.0" targetNamespace="urn:nebulent:schema:software:cep:metadata:1.0">
+	<!-- 
+============================================================== 
+USED INTERNALLY ONLY AS DOMAIN OBJECTS FOR MONITORING METADATA 
+============================================================== 
+	-->
+	<xs:complexType name="MonitorParameterCollectionType">
+		<xs:sequence>
+			<xs:element ref="MonitorParameter" minOccurs="0" maxOccurs="unbounded"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MonitorParameterType">
+		<xs:sequence>
+			<xs:element name="value" type="xs:string"/>
+			<xs:element name="comparator" type="ConditionComparator" minOccurs="1" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="id" type="xs:string" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="AlertType">
+		<xs:annotation>
+			<xs:documentation>
+				This is a logical object that will not exist physically in the database, only in non-SQL database like MongoDB, Solr or distributed cache.
+				Note, that alert for the same monitor should be created only once and updated (lastOccurrenceDate, content and possibly criticality). 
+				But any external notification methods should still be invoked, like email.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="content" type="xs:base64Binary"/>
+			<!--  
+			<xs:element name="monitor" type="MonitorType" minOccurs="0"/>
+			-->
+		</xs:sequence>
+		<xs:attribute name="id" type="xs:string" use="optional"/>
+		<xs:attribute name="monitorId" type="xs:int" use="required"/>
+		<xs:attribute name="accountUUID" type="xs:string" use="required"/>
+		<xs:attribute name="resourceCode" type="MonitoredResourceCode" use="required"/>
+		<xs:attribute name="resourceUUID" type="xs:string" use="required"/>
+		<xs:attribute name="name" type="xs:string" use="required"/>
+		<xs:attribute name="criticality" type="Criticality" use="required"/>
+		<xs:attribute name="startDate" type="xs:dateTime" use="required"/>
+		<xs:attribute name="lastOccurrenceDate" type="xs:dateTime" use="required"/>
+		<xs:attribute name="endDate" type="xs:dateTime" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="MonitoringMetadataType">
+		<xs:sequence>
+			<xs:element name="monitoredResource" type="MonitoredResourceType" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="version" type="xs:string" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="MonitoredResourceType">
+		<xs:sequence>
+			<xs:element name="description" type="xs:string" minOccurs="0"/>
+			<xs:element name="supportedConditions" type="MonitorConditionType" maxOccurs="unbounded"/>
+			<xs:element name="managedConditions" type="MonitorConditionType" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="id" type="MonitoredResourceCode" use="required"/>
+		<xs:attribute name="label" type="xs:string" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="MonitorConditionParameterType">
+		<xs:sequence>
+			<xs:element name="description" type="xs:string" minOccurs="0"/>
+			<xs:element name="supportedComparators" type="ConditionComparatorType" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="id" type="xs:string" use="required"/>
+		<xs:attribute name="label" type="xs:string" use="required"/>
+		<xs:attribute name="datatype" type="ConditionParameterDatatype" use="optional" default="String"/>
+		<xs:attribute name="required" type="xs:boolean" use="optional" default="true"/>
+		<xs:attribute name="defaultValue" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="MonitorOutParameterType">
+		<xs:sequence>
+			<xs:element name="description" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+		<xs:attribute name="id" type="xs:string" use="required"/>
+		<xs:attribute name="label" type="xs:string" use="required"/>
+		<xs:attribute name="datatype" type="ConditionParameterDatatype" use="optional" default="String"/>
+		<xs:attribute name="defaultValue" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="MonitorConditionType">
+		<xs:sequence>
+			<xs:element name="expression" type="xs:string"/>
+			<xs:element name="description" type="xs:string" minOccurs="0"/>
+			<xs:element name="supportedParameters" type="MonitorConditionParameterType" maxOccurs="unbounded"/>
+			<xs:element name="outParameters" type="MonitorOutParameterType" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="id" type="xs:string" use="required"/>
+		<xs:attribute name="label" type="xs:string" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="ConditionComparatorType">
+		<xs:attribute name="code" type="ConditionComparator" use="required"/>
+		<xs:attribute name="label" type="xs:string" use="required"/>
+	</xs:complexType>
+	<!-- 
+======================================================================= 
+Enumerations 
+======================================================================= 
+	-->
+	<xs:simpleType name="ConditionParameterDatatype">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="String"/>
+			<xs:enumeration value="Date"/>
+			<xs:enumeration value="Integer"/>
+			<xs:enumeration value="Long"/>
+			<xs:enumeration value="Float"/>
+			<xs:enumeration value="Double"/>
+			<xs:enumeration value="Percentage"/>
+			<xs:enumeration value="Money"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="MonitoredResourceCode">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Application"/>
+			<xs:enumeration value="Database"/>
+			<xs:enumeration value="Intrastructure"/>
+			<xs:enumeration value="Network"/>
+			<xs:enumeration value="Correlated"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="Criticality">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Failure"/>
+			<xs:enumeration value="Problem"/>
+			<xs:enumeration value="Warning"/>
+			<xs:enumeration value="Info"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ConditionComparator">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="GreaterThan"/>
+			<xs:enumeration value="GreaterThanEquals"/>
+			<xs:enumeration value="LessThan"/>
+			<xs:enumeration value="LessThanEquals"/>
+			<xs:enumeration value="Equals"/>
+			<xs:enumeration value="NotEquals"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!-- 
+=======================================================================   
+End Enumerations                  
+======================================================================= 
+	-->
+	<!-- 
+======================================================================= 
+Elements. 
+======================================================================= 
+	-->
+	<xs:element name="Configuration">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="monitoringMetadata" type="MonitoringMetadataType"/>
+			</xs:sequence>
+			<xs:attribute name="version" type="xs:string" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="MonitorParameters" type="MonitorParameterCollectionType"/>
+	<xs:element name="MonitorParameter" type="MonitorParameterType"/>
+	<!-- 
+======================================================================= 
+End Elements. 
+======================================================================= 
+	-->
+</xs:schema>

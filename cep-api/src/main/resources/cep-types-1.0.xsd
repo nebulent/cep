@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="urn:nebulent:schema:software:cep:types:1.0" targetNamespace="urn:nebulent:schema:software:cep:types:1.0" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	
+	<xs:element name="Monitor" type="MonitorType" />
+	<xs:element name="Condition" type="ConditionType" />
+	<xs:element name="Schedule" type="ScheduleType" />
+	<xs:element name="Alert" type="AlertType" />
+	
+	<xs:complexType name="AuditType">
+		<xs:sequence>
+			<xs:element name="changeDate" type="xs:dateTime" minOccurs="0"/>
+			<xs:element name="changeBy" type="xs:string" minOccurs="0"/>
+			<xs:element name="status" type="xs:string" minOccurs="0"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="MonitorType">
+		<xs:complexContent>
+			<xs:extension base="AuditType">
+				<xs:sequence>
+					<xs:element name="criticalityTypeCode" type="xs:string" minOccurs="0"/>
+					<xs:element name="name" type="xs:string" minOccurs="0"/>
+					<xs:element name="message" type="xs:string" minOccurs="0"/>
+					<xs:element ref="Condition" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element ref="Schedule" minOccurs="0" maxOccurs="unbounded"/>
+					<xs:element ref="Alert" minOccurs="0" maxOccurs="unbounded"/>
+				</xs:sequence>
+				<xs:attribute name="id" type="xs:long" use="optional"/>
+				<xs:attribute name="resourceCode" type="xs:string" use="optional"/>
+				<xs:attribute name="conditionCode" type="xs:string" use="optional"/>
+				<xs:attribute name="occurrenceInterval" type="xs:integer" use="optional"/>
+				<xs:attribute name="managedQuery" type="xs:boolean" use="optional"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="ConditionType">
+		<xs:attribute name="id" type="xs:long" use="optional"/>
+		<xs:attribute name="name" type="xs:string" use="optional"/>
+		<xs:attribute name="expression" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="ScheduleType">
+		<xs:complexContent>
+			<xs:extension base="AuditType">
+				<xs:attribute name="id" type="xs:long" use="optional"/>
+				<xs:attribute name="name" type="xs:string" use="optional"/>
+				<xs:attribute name="minutes" type="xs:string" use="optional"/>
+				<xs:attribute name="hours" type="xs:string" use="optional"/>
+				<xs:attribute name="daysOfWeek" type="xs:string" use="optional"/>
+				<xs:attribute name="daysOfMonth" type="xs:string" use="optional"/>
+				<xs:attribute name="months" type="xs:string" use="optional"/>
+				<xs:attribute name="seconds" type="xs:string" use="optional"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	<xs:complexType name="AlertType">
+		<xs:complexContent>
+			<xs:extension base="AuditType">
+				<xs:sequence>
+					<xs:element name="message" type="xs:string" minOccurs="0"/>
+					<xs:element name="monitor" type="MonitorType" minOccurs="0"/>
+				</xs:sequence>
+				<xs:attribute name="id" type="xs:long" use="optional"/>
+				<xs:attribute name="parentId" type="xs:long" use="optional"/>
+				<xs:attribute name="startTime" type="xs:dateTime" use="optional"/>
+				<xs:attribute name="endTime" type="xs:dateTime" use="optional"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+</xs:schema>

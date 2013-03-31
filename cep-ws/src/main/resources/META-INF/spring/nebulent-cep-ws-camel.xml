@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:camel="http://camel.apache.org/schema/spring"
+       xmlns:cxf="http://camel.apache.org/schema/cxf"
+       xmlns:util="http://www.springframework.org/schema/util"
+	   xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+       http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd">
+	
+	<!--
+  	<cxf:rsClient 
+  			id="rsClient" 
+  			address="${rest.alertServiceClient.uri}"
+            serviceClass="com.nebulent.cep.service.resource.AlertResource"
+    loggingFeatureEnabled="true"/>
+    -->
+    
+    <!-- ========================= Monitor Camel-based Event Processor ========================= -->
+	
+	<bean id="eventProcessor" class="com.nebulent.cep.monitoring.service.integration.CamelEventProcessor">
+		<property name="camelContext" ref="camelContext"/>
+		<property name="destination" value="direct:storeAlerts"/>
+	</bean>
+	
+	<!-- ========================= Camel Beans ========================= -->
+	
+	<!-- ========================= Camel Context ========================= -->
+	
+	<camel:camelContext id="camelContext" trace="true" xmlns="http://camel.apache.org/schema/spring">
+
+		<camel:dataFormats>
+            <camel:json id="jackAlert" library="Jackson" prettyPrint="true" unmarshalTypeName="nebulent.schema.software.cep.types._1.Alert"/>
+            <camel:jaxb id="jaxbEvents" prettyPrint="true" encoding="utf-8" contextPath="nebulent.schema.software.cep.events._1"/>
+            
+            <!--camel:syslog id="mySyslog"/-->
+        </camel:dataFormats>
+        
+        <!-- Consume UDP syslog alerts. -->
+        <!--camel:route>
+	          <camel:from uri="mina:udp://localhost:10514"/>
+	          <camel:unmarshal ref="mySyslog"/>
+	          <camel:to uri="log:com.nebulent.cep.relp?level=INFO"/>
+	    </camel:route-->
+	    
+		<camel:route>
+			<camel:from uri="direct:processSyslogEvents" />
+			<camel:to uri="activemq:queue:SYSLOG.EVENTS" />
+		</camel:route>
+		
+		<camel:route>
+			<camel:from uri="activemq:queue:SYSLOG.EVENTS" />
+			<camel:to uri="log:com.nebulent.cep.relp.camel?level=INFO"/>
+			<camel:unmarshal ref="jaxbEvents"/>
+			<camel:to uri="bean:cepResource?method=logAnyEvent"/>
+		</camel:route>
+		
+		<!-- Invoked by RELP event processor once RELP server receives any kind of event. -->
+		<!--camel:route>
+			<camel:from uri="direct:storeSyslogEvents" />
+			<camel:to uri="log:com.nebulent.cep.relp.camel?level=INFO"/>
+			<camel:to uri="bean:syslogEventProcessor?method=process"/>
+			<camel:choice>
+				<camel:when>
+					<camel:ognl>request.body != null</camel:ognl>
+					<camel:pipeline>
+						<camel:to uri="log:com.nebulent.cep.relp.camel?level=INFO"/>
+						<camel:marshal ref="jaxbEvents"/>
+						<camel:to uri="log:com.nebulent.cep.relp.camel?level=INFO"/>
+						<camel:to uri="activemq:queue:SYSLOG.EVENTS" />
+					</camel:pipeline>
+				</camel:when>
+			</camel:choice>
+		</camel:route-->
+		
+		<camel:route>
+			<camel:from uri="direct:storeSyslogEvents" />
+			<camel:marshal ref="jaxbEvents"/>
+			<camel:to uri="log:com.nebulent.cep.relp.camel?level=INFO"/>
+			<camel:to uri="activemq:queue:SYSLOG.EVENTS" />
+		</camel:route>
+		
+		<!-- Invoked by Esper event processor when monitor generates an alert. -->
+		<camel:route>
+			<camel:from uri="direct:storeAlerts" />
+			<camel:to uri="log:com.nebulent.cep.service.resource.impl?level=DEBUG"/>
+			<camel:marshal ref="jackAlert"/>
+			<camel:to uri="log:com.nebulent.cep.service.resource.impl?level=DEBUG"/>
+			<camel:to uri="activemq:queue:ALERTS" />
+		</camel:route>
+		
+		<!-- Pickup generated alert and store in database through service call. -->
+		<camel:route>
+			<camel:from uri="activemq:queue:ALERTS" />
+			<camel:to uri="log:com.nebulent.cep.service.resource.impl?level=DEBUG"/>
+			<camel:unmarshal ref="jackAlert"/>
+			<camel:to uri="log:com.nebulent.cep.service.resource.impl?level=DEBUG"/>
+			<camel:to uri="bean:restServiceClient?method=createAlert"/>
+			
+			<!--
+       		<camel:setHeader headerName="CamelHttpContentType">
+         		<camel:constant>application/json</camel:constant>        
+       		</camel:setHeader>
+       		<camel:setHeader headerName="CamelHttpMethod">
+         		<camel:constant>POST</camel:constant>        
+       		</camel:setHeader>
+       		
+			<camel:to uri="cxfrs://bean://rsClient"/>
+			-->
+		</camel:route>
+		
+		<!--camel:route>
+			<camel:from uri="activemq:queue:SYSLOG.EVENTS" />
+    		<camel:throttle timePeriodMillis="1000">
+        		<camel:constant>5</camel:constant>
+				<camel:to uri="activemq:queue:THROTTLER" />
+			</camel:throttle>
+		</camel:route-->
+	</camel:camelContext>
+</beans>

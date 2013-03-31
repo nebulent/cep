@@ -1,0 +1,45 @@
+<?xml version="1.0"  encoding="UTF-8"?>
+
+<decorators defaultdir="/decorators">
+
+    <!-- Any urls that are excluded will never be decorated by Sitemesh -->
+
+    <excludes>
+
+        <pattern>*.css</pattern>
+
+        <pattern>*.xml</pattern>
+
+        <pattern>*.json</pattern>
+
+        <pattern>*.js</pattern>
+
+        <pattern>/config-browser/*</pattern>
+
+        <pattern>/styles/*</pattern>
+
+        <pattern>/scripts/*</pattern>
+
+        <pattern>/images/*</pattern>
+
+        <pattern>/dojo/*</pattern>
+
+        <pattern>/struts/*</pattern>
+
+        <pattern>/ajax/*</pattern>
+
+        <pattern>/tags/ui/ajax/*</pattern>
+
+        <pattern>/nodecorate/*</pattern>
+
+        <pattern>/ckeditor/*</pattern>
+
+    </excludes>
+
+    <decorator name="main" page="main.ftl">
+
+        <pattern>/*</pattern>
+
+    </decorator>
+
+</decorators>

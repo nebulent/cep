@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+    "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	
+	<constant name="struts.multipart.maxSize" value="100485760"/>
+    <constant name="struts.ui.theme" value="simple" />
+    <constant name="struts.multipart.saveDir" value="cep" />
+    <constant name="struts.action.extension" value="xhtml,,json" />
+	<constant name="struts.convention.action.mapAllMatches" value="true"/>
+	<constant name="struts.convention.action.suffix" value="Controller"/>
+	<constant name="struts.action.excludePattern" value="/ckeditor*,/rest/.*?" />	
+    <constant name="struts.convention.default.parent.package" value="rest-default"/>
+    <constant name="struts.convention.package.locators" value="actions"/>
+    
+    <!--include file="struts-default.xml"/-->
+
+    <package name="default" extends="struts-default">
+		<global-results>
+		    <result name="redirect" type="redirect">
+		    	<param name="location">%{redirectLocation}</param>
+		    </result>
+		    <result name="error" type="freemarker">
+		    	<param name="location">/WEB-INF/content/error.ftl</param>
+		    </result>
+		</global-results>
+    </package>
+</struts>

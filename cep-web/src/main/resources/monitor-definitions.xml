@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration version="1.0" xmlns="urn:nebulent:schema:software:cep:metadata:1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<monitoringMetadata version="1.0">
+		<monitoredResource id="Application" label="Application">
+			<description>Contains monitor definitions for Applications.</description>
+			<supportedConditions id="HighCPUCondition" label="High CPU">
+				<expression><![CDATA[
+SELECT Server.applicationID as applicationID, Server.host as host, avg(Server.cpuPerc) as cpuPerc 
+FROM AppServerHighCPUEvent(applicationID='${applicationID}', host='${host}').win:time(${cpuCaptureInterval}) as Server
+GROUP BY Server.applicationID, Server.host
+HAVING avg(Server.cpuPerc) $comparator["cpuPercAverageComparator"] ${cpuPercAverageComparator}
+				]]></expression>
+				<description>Condition is monitoring (in real time) the performance of application server based on CPU.</description>
+				<supportedParameters id="applicationID" label="Application ID" datatype="String" required="true">
+					<description>Specify Application ID</description>
+				</supportedParameters>
+				<supportedParameters id="host" label="Host Name" datatype="String" required="true">
+					<description>Specify Host Name</description>
+				</supportedParameters>
+				<supportedParameters id="cpuCaptureInterval" label="CPU Capture Interval" datatype="String" required="true">
+					<description>Specify time window to collect Application Server High CPU events (for example, '1 min' or '1 hour')</description>
+				</supportedParameters>
+				<supportedParameters id="cpuPercAverageComparator" label="CPU Percentage Comparator" datatype="String" required="true">
+					<description>Specify comparator between average CPU percentage during the past (see CPU Capture Interval parameter)</description>
+					<supportedComparators code="GreaterThan" label="Greater Than"/>
+					<supportedComparators code="GreaterThanEquals" label="Greater Than Equals"/>
+					<supportedComparators code="LessThan" label="Less Than"/>
+					<supportedComparators code="LessThanEquals" label="Less Than Equals"/>
+					<supportedComparators code="Equals" label="Equals"/>
+					<supportedComparators code="NotEquals" label="Not Equals"/>
+				</supportedParameters>
+				<outParameters id="applicationID" datatype="String"/>
+				<outParameters id="host" datatype="String"/>
+				<outParameters id="cpuPerc" datatype="Double"/>
+			</supportedConditions>
+			<supportedConditions id="AppDownTooLongCondition" label="Application stayed down for too long">
+				<expression><![CDATA[
+SELECT apiProbeDown.source as source, apiProbeDown.host as host, apiProbeDown.programName as programName, apiProbeDown.logDate as logDate
+FROM PATTERN [
+every apiProbeDown = APIProbeSysLogEvent(source='OFF-OPCOCD-DS', host='${host}', programName='bdprobe', up=false) 
+-> 
+(not apiProbeUp = APIProbeSysLogEvent(source=apiProbeDown.source, host=apiProbeDown.host, programName=apiProbeDown.programName, up=true))
+where timer:within(${probeCaptureInterval})
+]
+				]]></expression>
+				<description>Check (in real time) if the application on certain host went down and never got up after Probe Capture Interval.</description>
+				<supportedParameters id="source" label="Source of Probe (OFF-OPCOCD-DS)" datatype="String" required="false">
+					<description>Specify Source of probe</description>
+				</supportedParameters>
+				<supportedParameters id="programName" label="Application or Program Name" datatype="String" required="false">
+					<description>Specify Syslog type (bdprobe)</description>
+				</supportedParameters>
+				<supportedParameters id="host" label="Host Name" datatype="String" required="true">
+					<description>Specify Host Name</description>
+				</supportedParameters>
+				<supportedParameters id="probeCaptureInterval" label="Probe Capture Interval" datatype="String" required="true">
+					<description>Specify time window to collect Application Server High CPU events (for example, '1 min' or '1 hour')</description>
+				</supportedParameters>
+				<outParameters id="source" datatype="String"/>
+				<outParameters id="host" datatype="String"/>
+				<outParameters id="programName" datatype="String"/>
+				<outParameters id="logDate" datatype="Date"/>
+			</supportedConditions>
+			<supportedConditions id="AppAlertPassThroughCondition" label="Application alerts coming from JMX (all pass-through)">
+				<expression><![CDATA[
+SELECT jmx.source as source, jmx.host as host, jmx.programName as programName, jmx.logDate as logDate, jmx.alertCount, jmx.lastAlertDate, jmx.clearCount, jmx.lastClearDate, jmx.developer, jmx.criticality, jmx.message
+FROM PATTERN [
+every-distinct(jmx.host, jmx.programName, jmx.source, jmx.alertCount, jmx.lastAlertDate) jmx = JMXApplicationAlertEvent(host='${host}', programName='${programName}', active=true) 
+where timer:within(${probeCaptureInterval})
+]
+				]]></expression>
+				<description>Check (in real time) if the application on certain host received some JMX-based alert.</description>
+				<supportedParameters id="programName" label="Application or Program Name" datatype="String" required="false">
+					<description>Specify JMX name</description>
+				</supportedParameters>
+				<supportedParameters id="host" label="Host Name" datatype="String" required="true">
+					<description>Specify Host Name</description>
+				</supportedParameters>
+				<supportedParameters id="probeCaptureInterval" label="Probe Capture Interval" datatype="String" required="true">
+					<description>Specify time window to collect Application Server High CPU events (for example, '1 min' or '1 hour')</description>
+				</supportedParameters>
+				<outParameters id="source" datatype="String"/>
+				<outParameters id="host" datatype="String"/>
+				<outParameters id="programName" datatype="String"/>
+				<outParameters id="logDate" datatype="Date"/>
+			</supportedConditions>
+		</monitoredResource>
+		<monitoredResource id="Database" label="Database">
+			<description>Contains monitor definitions for Databases.</description>
+			<supportedConditions id="DatabaseRetentionCondition" label="Database Retention">
+				<expression><![CDATA[
+SELECT Server.host as host, avg(Server.cpuPerc) as cpuPerc, avg(Server_PAST.cpuPerc) as cpuPercPast, avg(Login.numberOfLogins) as numberOfLogins, avg(Login_PAST.numberOfLogins) as numberOfLoginsPast, max(Db.numberOfQueries) as maxNumberOfQueries
+FROM
+AppServerHighCPUEvent.win:time(${cpuCaptureInterval}) as Server
+, AppServerHighCPUEvent.win:ext_timed(current_timestamp, ${cpuCaptureFromPastInterval}) as Server_PAST
+, LoginCountEvent.win:time(${loginCaptureInterval}) as Login
+, LoginCountEvent.win:ext_timed(current_timestamp, ${loginCaptureFromPastInterval}) as Login_PAST
+, DatabaseSlowQueryEvent.win:time (${databaseCaptureInterval}) as Db
+GROUP BY Server.host
+HAVING
+avg(Login.numberOfLogins) $comparator["presentToPastLoginCountComparator"] avg(Login_PAST.numberOfLogins) * ${presentToPastLoginCountComparator} 
+AND avg(Server.cpuPerc) $comparator["presentToPastCPUAverageComparator"] avg(Server_PAST.cpuPerc) * ${presentToPastCPUAverageComparator}
+AND max(Db.numberOfQueries) $comparator["databaseNumberOfQueriesThresholdComparator"] ${databaseNumberOfQueriesThresholdComparator}
+				]]></expression>
+				<description>Condition is monitoring (in real time) the performance of the database in conjunction with the load on application server CPU and application login sessions.</description>
+				<supportedParameters id="cpuCaptureInterval" label="CPU Capture Interval" datatype="String" required="true">
+					<description>Specify time window to collect Application Server High CPU events (for example, '1 min' or '1 hour')</description>
+				</supportedParameters>
+				<supportedParameters id="cpuCaptureFromPastInterval" label="CPU Capture from past Interval" datatype="String" required="true">
+					<description>Specify time window to collect historical Application Server High CPU events. Must be greater than CPU Capture Interval (for example, '5 min' or '3 hour')</description>
+				</supportedParameters>
+				<supportedParameters id="loginCaptureInterval" label="Login Capture Interval" datatype="String" required="true">
+					<description>Specify time window to collect Login events (for example, '1 min' or '1 hour')</description>
+				</supportedParameters>
+				<supportedParameters id="loginCaptureFromPastInterval" label="Login Capture from past Interval" datatype="String" required="true">
+					<description>Specify time window to collect historical Login events. Must be greater than Login Capture Interval (for example, '5 min' or '3 hour')</description>
+				</supportedParameters>
+				<supportedParameters id="databaseCaptureInterval" label="Database Capture Interval" datatype="String" required="true">
+					<description>Specify time window to collect Login events (for example, '1 min' or '1 hour')</description>
+				</supportedParameters>
+				<supportedParameters id="presentToPastLoginCountComparator" label="Present to past Login Count Comparator" datatype="String" required="true">
+					<description>Specify comparator between number of present logins (see Login Capture Interval parameter) to number of logins in the past (see login Capture from past Interval parameter)</description>
+					<supportedComparators code="GreaterThan" label="Greater Than"/>
+					<supportedComparators code="GreaterThanEquals" label="Greater Than Equals"/>
+					<supportedComparators code="LessThan" label="Less Than"/>
+					<supportedComparators code="LessThanEquals" label="Less Than Equals"/>
+					<supportedComparators code="Equals" label="Equals"/>
+					<supportedComparators code="NotEquals" label="Not Equals"/>
+				</supportedParameters>
+				<supportedParameters id="presentToPastCPUAverageComparator" label="Present to past CPU Average Comparator" datatype="String" required="true">
+					<description>Specify comparator between present CPU average (see cpuCaptureInterval parameter) and CPU average in the past (see CPU Capture from past Interval parameter)</description>
+					<supportedComparators code="GreaterThan" label="Greater Than"/>
+					<supportedComparators code="GreaterThanEquals" label="Greater Than Equals"/>
+					<supportedComparators code="LessThan" label="Less Than"/>
+					<supportedComparators code="LessThanEquals" label="Less Than Equals"/>
+					<supportedComparators code="Equals" label="Equals"/>
+					<supportedComparators code="NotEquals" label="Not Equals"/>
+				</supportedParameters>
+				<supportedParameters id="databaseNumberOfQueriesThresholdComparator" label="Database Number of Queries Threshold Comparator" datatype="String" required="true">
+					<description>Specify comparator between number of queries received in database event and numeric threshold.</description>
+					<supportedComparators code="GreaterThan" label="Greater Than"/>
+					<supportedComparators code="GreaterThanEquals" label="Greater Than Equals"/>
+					<supportedComparators code="LessThan" label="Less Than"/>
+					<supportedComparators code="LessThanEquals" label="Less Than Equals"/>
+					<supportedComparators code="Equals" label="Equals"/>
+					<supportedComparators code="NotEquals" label="Not Equals"/>
+				</supportedParameters>
+				<outParameters id="host" datatype="String"/>
+				<outParameters id="cpuPerc" datatype="Double"/>
+				<outParameters id="cpuPercPast" datatype="Double"/>
+				<outParameters id="numberOfLogins" datatype="Long"/>
+				<outParameters id="numberOfLoginsPast" datatype="Long"/>
+				<outParameters id="maxNumberOfQueries" datatype="Long"/>
+			</supportedConditions>
+			<managedConditions id="DatabaseRetentionCondition" label="Database Retention (Managed)">
+				<expression>
+				<![CDATA[
+INSERT INTO LoginCountEvent SELECT Login.applicationID as applicationID, Login.host as host, count(*) as numberOfLogins from LoginEvent.win:time_batch(${loginCaptureInterval}) as Login GROUP BY Login.applicationID, Login.host
+				]]></expression>
+				<description>Condition is counting all Login attempts.</description>
+				<supportedParameters id="loginCaptureInterval" label="Login Capture Interval" datatype="String" required="true" defaultValue="1 min">
+					<description>Specify time window to collect Login events (for example, '1 min' or '1 hour')</description>
+				</supportedParameters>
+			</managedConditions>
+		</monitoredResource>
+	</monitoringMetadata>
+</Configuration>

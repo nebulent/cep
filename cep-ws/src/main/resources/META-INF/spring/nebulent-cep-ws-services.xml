@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:cxf="http://cxf.apache.org/core"
+	   xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	   xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
+       http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd">
+	
+	<!-- ========================= Resources ========================= -->
+	<bean id="monitorResource" class="com.nebulent.cep.service.resource.impl.MonitorResourceImpl" autowire="byName"/>
+	<bean id="alertResource" class="com.nebulent.cep.service.resource.impl.AlertResourceImpl" autowire="byName"/>
+	<bean id="cepResource" class="com.nebulent.cep.service.resource.impl.CepResourceImpl" autowire="byName">
+		<property name="camelContext" ref="camelContext"/>
+        <property name="route" value="direct:processSyslogEvents"/>
+	</bean>
+	
+	<!-- ========================= Rest Services ========================= -->
+	<jaxrs:server id="restAPI" address="/" staticSubresourceResolution="true">
+		<jaxrs:serviceBeans>
+			<ref bean="monitorResource" />
+			<ref bean="alertResource" />
+			<ref bean="cepResource" />
+		</jaxrs:serviceBeans>
+		<jaxrs:providers>
+			<bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+		</jaxrs:providers>
+		<jaxrs:features>
+			<cxf:logging/>
+		</jaxrs:features>
+	</jaxrs:server>
+    
+    <jaxrs:client id="restServiceClient" address="${rest.restServiceClient.uri}"
+            serviceClass="com.nebulent.cep.service.resource.AlertResource" inheritHeaders="true">
+        <jaxrs:providers>
+        	<bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+        </jaxrs:providers>
+    </jaxrs:client>
+</beans>
