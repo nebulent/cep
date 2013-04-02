@@ -3,35 +3,76 @@
 	xmlns="urn:nebulent:schema:software:cep:events:1.0"
 	targetNamespace="urn:nebulent:schema:software:cep:events:1.0"
 	elementFormDefault="qualified" attributeFormDefault="unqualified">
-
-	<!-- ====================== Monitors ==========================
 	
-	<xs:element name="DatabaseRetentionMonitor">
+	<!-- ====================== Events ========================== -->
+	
+	<xs:complexType name="BaseCEPEvent">
+		<xs:sequence>
+			<xs:element name="criticality" minOccurs="0" maxOccurs="1">
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="Failure"/>
+						<xs:enumeration value="Problem"/>
+						<xs:enumeration value="Warning"/>
+						<xs:enumeration value="Info"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="message" type="xs:string" minOccurs="0" maxOccurs="1"/>
+		</xs:sequence>
+		<xs:attribute name="tenantId" type="xs:string" use="required" />
+		<xs:attribute name="deviceToken" type="xs:string" use="optional" />
+		<xs:attribute name="userIdentifier" type="xs:string" use="optional" />
+		<xs:attribute name="occurrenceDate" type="xs:dateTime" use="optional" />
+	</xs:complexType>
+	
+	<!-- ====================== Bluetooth Events (http://www.thisisant.com/developer/ant-plus/device-profiles) ========================== -->
+	
+	<xs:element name="AntPlusBloodPressureEvent">
 		<xs:complexType>
-			<xs:attribute name="applicationID" type="xs:string" use="required" />
-			<xs:attribute name="host" type="xs:string" use="required" />
-			<xs:attribute name="loginRaisedPercentageThreshold" type="xs:double" use="required" />
-			<xs:attribute name="cpuRaisedPercentageThreshold" type="xs:double" use="required" />
-			<xs:attribute name="loginCaptureInterval" type="xs:string" use="required" />
-			<xs:attribute name="cpuCaptureInterval" type="xs:string" use="required" />
-			<xs:attribute name="loginCaptureFromPastInterval" type="xs:string" use="required" />
-			<xs:attribute name="cpuCaptureFromPastInterval" type="xs:string" use="required" />
-			<xs:attribute name="slowQueriesThreshold" type="xs:int" use="required" />
+			<xs:complexContent>
+				<xs:extension base="BaseCEPEvent">
+					<xs:attribute name="systolic" type="xs:int" use="required" />
+					<xs:attribute name="diastolic" type="xs:int" use="required" />
+					<xs:attribute name="heartRate" type="xs:int" use="optional" />
+					<xs:attribute name="meanArterialPressure" type="xs:int" use="optional" />
+					<xs:attribute name="heartRateType" type="xs:int" use="optional" />
+				</xs:extension>
+			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
-	<xs:element name="ApplicationDownMonitor">
+	
+	<xs:element name="AntPlusHeartRateEvent">
 		<xs:complexType>
-			<xs:attribute name="applicationID" type="xs:string" use="required" />
-			<xs:attribute name="host" type="xs:string" use="required" />
-			<xs:attribute name="freeMemoryPercentageThreshold" type="xs:int" use="required" />
-			<xs:attribute name="textContains" type="xs:string" use="required" />
-			<xs:attribute name="onInterval" type="xs:string" use="required" />
+			<xs:complexContent>
+				<xs:extension base="BaseCEPEvent">
+					<xs:attribute name="lastHeartBeat" type="xs:int" use="required" />
+					<xs:attribute name="previousHeartBeatTime" type="xs:int" use="required" />
+					<xs:attribute name="heartBeatCount" type="xs:int" use="required" />
+					<xs:attribute name="computedHeartRate" type="xs:int" use="required" />
+					<xs:attribute name="cumulativeOperatingTime" type="xs:int" use="optional" />
+				</xs:extension>
+			</xs:complexContent>
 		</xs:complexType>
 	</xs:element>
 	
-	======-->
+	<xs:element name="AntPlusWeightEvent">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="BaseCEPEvent">
+					<xs:attribute name="weight" type="xs:double" use="required" />
+					<xs:attribute name="hydrationPercent" type="xs:int" use="required" />
+					<xs:attribute name="bodyFatPercent" type="xs:int" use="required" />
+					<xs:attribute name="activeMetabolicRate" type="xs:int" use="required" />
+					<xs:attribute name="basalMetabolicRate" type="xs:int" use="required" />
+					<xs:attribute name="muscleMass" type="xs:int" use="optional" />
+					<xs:attribute name="boneMass" type="xs:int" use="optional" />
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
 	
-	<!-- ====================== Monitor Events ========================== -->
+	<!-- ====================== Syslog Events ========================== -->
 	
 	<xs:complexType name="BaseSysLogEvent">
 		<xs:sequence>
