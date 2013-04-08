@@ -1,6 +1,7 @@
 package com.nebulent.cep.domain.model;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,16 +21,11 @@ import javax.persistence.ManyToMany;
  *
  */
 @Entity(name = "cep_conditions")
-public class CepCondition  implements Serializable {
+public class CepCondition extends CepBaseEntity {
 
      /**/
 	private static final long serialVersionUID = 1L;
 	
-    @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
-	private long id;
-    
     @Column(name = "tenant_id", nullable = false)
 	private int tenantId;
     
@@ -54,7 +50,7 @@ public class CepCondition  implements Serializable {
      * @param name
      * @param definition
      */
-    public CepCondition(long id, String name, String expression) {
+    public CepCondition(BigInteger id, String name, String expression) {
         this.id = id;
         this.name = name;
         this.definition = expression;
@@ -66,26 +62,12 @@ public class CepCondition  implements Serializable {
      * @param definition
      * @param monitors
      */
-    public CepCondition(long id, String name, String expression, Set<CepMonitor> monitors) {
+    public CepCondition(BigInteger id, String name, String expression, Set<CepMonitor> monitors) {
        this.id = id;
        this.name = name;
        this.definition = expression;
        this.monitors = monitors;
     }
-
-	/**
-	 * @return the id
-	 */
-	public long getId() {
-		return id;
-	}
-
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(long id) {
-		this.id = id;
-	}
 
 	/**
 	 * @return the tenantId

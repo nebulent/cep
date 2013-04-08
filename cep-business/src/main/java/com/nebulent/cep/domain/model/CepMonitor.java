@@ -1,5 +1,6 @@
 package com.nebulent.cep.domain.model;
 
+import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,15 +21,10 @@ import javax.persistence.OneToMany;
  * 
  */
 @Entity(name = "cep_monitors")
-public class CepMonitor implements java.io.Serializable {
+public class CepMonitor extends CepBaseEntity {
 
 	/**/
 	private static final long serialVersionUID = 1L;
-
-	@Id
-	@Column(name = "id")
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
 
 	@Column(name = "tenant_id", nullable = false)
 	private int tenantId;
@@ -119,21 +115,6 @@ public class CepMonitor implements java.io.Serializable {
 		this.status = status;
 		this.conditions = conditions;
 		this.alerts = alerts;
-	}
-
-	/**
-	 * @return the id
-	 */
-	public Long getId() {
-		return id;
-	}
-
-	/**
-	 * @param id
-	 *            the id to set
-	 */
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	/**

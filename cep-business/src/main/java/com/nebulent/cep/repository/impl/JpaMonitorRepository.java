@@ -3,6 +3,7 @@
  */
 package com.nebulent.cep.repository.impl;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import com.nebulent.cep.domain.model.CepAlert;
@@ -17,112 +18,69 @@ import com.nebulent.cep.repository.RepositoryException;
  */
 public class JpaMonitorRepository extends JpaAbstractRepository implements MonitorRepository {
 
-	/* (non-Javadoc)
-	 * @see com.nebulent.cep.repository.MonitorRepository#createMonitor(com.nebulent.cep.domain.model.CepMonitor)
-	 */
-	public CepMonitor createMonitor(CepMonitor monitor) throws RepositoryException {
-        if (!persist(monitor)){
-        	throw new RepositoryException("Failed to create monitor:" + monitor.getName());
-        }
-        return monitor;
-    }
-	
-	/* (non-Javadoc)
-	 * @see com.nebulent.cep.repository.MonitorRepository#getAllMonitors()
-	 */
-	@SuppressWarnings("unchecked")
-	public List<CepMonitor> getAllMonitors() {
-		return entityManager.createQuery("FROM com.nebulent.cep.domain.model.CepMonitor monitor JOIN FETCH monitor.conditions").getResultList();
-	}
-	
-	/* (non-Javadoc)
-	 * @see com.nebulent.cep.repository.MonitorRepository#getMonitorById(long)
-	 */
-	public CepMonitor getMonitorById(long id) {
-		return entityManager.find(CepMonitor.class, id);
+	@Override
+	public <S extends CepMonitor> S save(S entity) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.nebulent.cep.repository.MonitorRepository#updateMonitor(com.nebulent.cep.domain.model.CepMonitor)
-	 */
 	@Override
-	public CepMonitor updateMonitor(CepMonitor monitor) throws RepositoryException {
-		if (!persist(monitor)){
-        	throw new RepositoryException("Failed to update monitor:" + monitor.getName() + ", id=" + monitor.getId());
-        }
-        return monitor;
+	public <S extends CepMonitor> Iterable<S> save(Iterable<S> entities) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.nebulent.cep.repository.MonitorRepository#removeMonitor(long)
-	 */
 	@Override
-	public void removeMonitor(long id) throws RepositoryException {
-		if (!remove(CepMonitor.class, id)){
-        	throw new RepositoryException("Failed to remove monitor:" + id);
-        }
+	public CepMonitor findOne(BigInteger id) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.nebulent.cep.repository.MonitorRepository#getAllAlertsByMonitor(long)
-	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	public List<CepAlert> getAllAlertsByMonitor(long monitorId)
-			throws RepositoryException {
-		javax.persistence.Query query = entityManager.createQuery("FROM com.nebulent.cep.domain.model.CepAlert alert JOIN FETCH alert.monitor WHERE alert.monitor.id = :ID and alert.startTime != NULL ORDER BY alert.startTime DESC");
-		query.setParameter("ID", monitorId);
-		return query.getResultList();
+	public boolean exists(BigInteger id) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.nebulent.cep.repository.MonitorRepository#createAlert(com.nebulent.cep.domain.model.CepAlert)
-	 */
 	@Override
-	public CepAlert createAlert(CepAlert alert)
-			throws RepositoryException {
-		if (!persist(alert)){
-        	throw new RepositoryException("Failed to create alert:" + alert.getMessage());
-        }
-        return alert;
+	public Iterable<CepMonitor> findAll() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.nebulent.cep.repository.MonitorRepository#updateAlert(com.nebulent.cep.domain.model.CepAlert)
-	 */
 	@Override
-	public CepAlert updateAlert(CepAlert alert)
-			throws RepositoryException {
-		if (!persist(alert)){
-        	throw new RepositoryException("Failed to update monitor:" + alert.getMessage() + ", id=" + alert.getId());
-        }
-        return alert;
+	public Iterable<CepMonitor> findAll(Iterable<BigInteger> ids) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.nebulent.cep.repository.MonitorRepository#removeAlert(long)
-	 */
 	@Override
-	public void removeAlert(long id) throws RepositoryException {
-		if (!remove(CepAlert.class, id)){
-        	throw new RepositoryException("Failed to remove alert:" + id);
-        }
+	public long count() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.nebulent.cep.repository.MonitorRepository#getAllAlerts()
-	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	public List<CepAlert> getAllAlerts() throws RepositoryException {
-		return entityManager.createQuery("FROM com.nebulent.cep.domain.model.CepAlert alert JOIN FETCH alert.monitor WHERE alert.startTime != NULL ORDER BY alert.startTime DESC").getResultList();
+	public void delete(BigInteger id) {
+		// TODO Auto-generated method stub
+		
 	}
 
-	/* (non-Javadoc)
-	 * @see com.nebulent.cep.repository.MonitorRepository#getAlertById(long)
-	 */
 	@Override
-	public CepAlert getAlertById(long id) {
-		return entityManager.find(CepAlert.class, id);
+	public void delete(CepMonitor entity) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void delete(Iterable<? extends CepMonitor> entities) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void deleteAll() {
+		// TODO Auto-generated method stub
+		
 	}
 }

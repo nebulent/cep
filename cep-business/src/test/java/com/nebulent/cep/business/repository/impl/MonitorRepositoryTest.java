@@ -23,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.nebulent.cep.domain.model.CepAlert;
 import com.nebulent.cep.domain.model.CepCondition;
 import com.nebulent.cep.domain.model.CepMonitor;
+import com.nebulent.cep.repository.AlertRepository;
+import com.nebulent.cep.repository.MonitorRepository;
 import com.nebulent.cep.repository.impl.JpaMonitorRepository;
 import com.nebulent.cep.utils.MarshallerUtils;
 
@@ -32,14 +34,17 @@ import com.nebulent.cep.utils.MarshallerUtils;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:META-INF/spring/test-cep.xml"})
-@Transactional
-@TransactionConfiguration(defaultRollback = false)
+//@Transactional
+//@TransactionConfiguration(defaultRollback = false)
 public class MonitorRepositoryTest {
     
 	protected final static Logger LOGGER = LoggerFactory.getLogger(MonitorRepositoryTest.class);
 	
 	@Autowired
-    private JpaMonitorRepository monitorRepository;
+    private MonitorRepository monitorRepository;
+	
+	@Autowired
+	private AlertRepository alertRepository;
 	
 	@Autowired
 	private Marshaller marshaller;
@@ -58,13 +63,13 @@ public class MonitorRepositoryTest {
 		alert.setStatus("A");
 		alert.setMonitor(monitor);
 		
-		alert = monitorRepository.createAlert(alert);
+		alert = alertRepository.save(alert);
 		System.out.println(alert.getId() + "," + alert.getMessage());
 	}
 	
 	@Test
     public void testGetAlerts() {
-		List<CepAlert> alerts = monitorRepository.getAllAlerts();
+		Iterable<CepAlert> alerts = alertRepository.findAll();
 		for (CepAlert alert : alerts) {
 			System.out.println(alert.getId() + "," + alert.getMessage());
 		}
@@ -121,7 +126,7 @@ public class MonitorRepositoryTest {
     	
     	monitor.getConditions().add(condition);
     	
-    	monitorRepository.createMonitor(monitor);
+    	monitorRepository.save(monitor);
 	}
 	
 	
@@ -168,7 +173,7 @@ public class MonitorRepositoryTest {
     	
     	monitor.getConditions().add(condition);
     	
-    	monitorRepository.createMonitor(monitor);
+    	monitorRepository.save(monitor);
 	}
 	
 	
@@ -211,7 +216,7 @@ public class MonitorRepositoryTest {
     	
     	monitor.getConditions().add(condition);
     	
-    	monitorRepository.createMonitor(monitor);
+    	monitorRepository.save(monitor);
 	}
 	
     /**
@@ -356,6 +361,6 @@ public class MonitorRepositoryTest {
     	
     	monitor.getConditions().add(condition);
     	
-    	monitorRepository.createMonitor(monitor);
+    	monitorRepository.save(monitor);
     }
 }

@@ -32,6 +32,13 @@ public class DomainUtil {
     public static final Character YES = 'Y';
     public static ObjectFactory cepTypesFactory = new ObjectFactory();
     
+    public static BigInteger toBigInteger(Long lng) {
+    	if (lng == null) {
+    		return null;
+    	}
+    	return new BigInteger(lng.toString());
+    }
+    
     /**
      * @param dateTime
      * @return
@@ -144,7 +151,7 @@ public class DomainUtil {
     		return null;
     	}
     	Monitor meta = new Monitor();
-    	meta.setId(monitor.getId());
+    	meta.setId(monitor.getId().longValue());
     	
     	if(setMonitor){
 	    	meta.setCriticalityTypeCode(monitor.getCriticalityTypeCode());
@@ -194,7 +201,7 @@ public class DomainUtil {
     		return null;
     	}
     	Condition conditionType = new Condition();
-    	conditionType.setId(condition.getId());
+    	conditionType.setId(condition.getId().longValue());
     	conditionType.setName(condition.getName());
     	conditionType.setExpression(condition.getDefinition());
     	return conditionType;
@@ -235,7 +242,7 @@ public class DomainUtil {
     		return null;
     	}
     	Alert alert = new Alert();
-    	alert.setId(alertEntity.getId());
+    	alert.setId(alertEntity.getId().longValue());
     	alert.setChangeBy(alertEntity.getChangeBy());
     	if(alertEntity.getChangeDate() != null){
     		alert.setChangeDate(toCalendar(alertEntity.getChangeDate()));

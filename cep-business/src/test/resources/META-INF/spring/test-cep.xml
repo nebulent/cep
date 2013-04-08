@@ -17,8 +17,9 @@
             http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm-3.0.xsd">
 
 	<!-- ======================== Resources ========================== -->
-	<import resource="classpath*:/META-INF/spring/test-cep-repositories.xml"/>
-	<import resource="classpath*:/META-INF/spring/test-cep-persistance.xml"/>
+	<!-- import resource="classpath*:/META-INF/spring/test-cep-repositories.xml"/>
+	<import resource="classpath*:/META-INF/spring/test-cep-persistance.xml"/-->
+	<import resource="classpath*:/META-INF/spring/test-cep-mongo.xml"/>
 	<import resource="classpath*:/META-INF/spring/test-cep-monitoring.xml"/>
 	
 	<!-- ======================== Properties ========================= -->
