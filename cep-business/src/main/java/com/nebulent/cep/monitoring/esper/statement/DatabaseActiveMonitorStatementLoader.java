@@ -39,7 +39,7 @@ public class DatabaseActiveMonitorStatementLoader implements StatementLoader {
 	//@Transactional
     public List<StatementBean> loadStatements() {
     	List<StatementBean> statementBeans = new ArrayList<StatementBean>();
-    	List<CepMonitor> monitors = monitorRepository.getAllMonitors();
+    	Iterable<CepMonitor> monitors = monitorRepository.findAll();
     	if(monitors != null) {
     		for (CepMonitor monitor : monitors) {
     			if('A' == monitor.getStatus()){

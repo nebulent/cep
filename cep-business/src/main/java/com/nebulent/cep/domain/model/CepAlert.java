@@ -1,6 +1,7 @@
 package com.nebulent.cep.domain.model;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,16 +17,11 @@ import javax.persistence.ManyToOne;
  *
  */
 @Entity(name = "cep_alerts")
-public class CepAlert implements Serializable {
+public class CepAlert extends CepBaseEntity {
 
-     /**/
+    /**/
 	private static final long serialVersionUID = 1L;
 	
-    @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
-    
     @Column(name = "tenant_id", nullable = false)
 	private int tenantId;
     
@@ -90,20 +86,6 @@ public class CepAlert implements Serializable {
        this.changeDate = changeDate;
        this.changeBy = changeBy;
     }
-
-	/**
-	 * @return the id
-	 */
-	public Long getId() {
-		return id;
-	}
-
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(Long id) {
-		this.id = id;
-	}
 
 	/**
 	 * @return the tenantId

@@ -3,6 +3,8 @@
  */
 package com.nebulent.cep.service.resource.impl;
 
+import static com.nebulent.cep.utils.DomainUtil.toBigInteger;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,11 +13,13 @@ import nebulent.schema.software.cep.types._1.Monitor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.nebulent.cep.domain.model.CepAlert;
 import com.nebulent.cep.domain.model.CepMonitor;
 import com.nebulent.cep.monitoring.service.MonitorService;
+import com.nebulent.cep.repository.AlertRepository;
 import com.nebulent.cep.repository.MonitorRepository;
 import com.nebulent.cep.repository.RepositoryException;
 import com.nebulent.cep.service.resource.MonitorResource;
@@ -31,8 +35,14 @@ public class MonitorResourceImpl implements MonitorResource {
 
 	private Logger logger = LoggerFactory.getLogger(MonitorResourceImpl.class);
 	
+	@Autowired
 	private MonitorRepository monitorRepository;
+	
+	@Autowired
 	private MonitorService monitorService;
+	
+	@Autowired
+	private AlertRepository alertRepository;
 	
 	/* (non-Javadoc)
 	 * @see com.nebulent.cep.service.resource.MonitorResource#getMonitors()
@@ -40,8 +50,8 @@ public class MonitorResourceImpl implements MonitorResource {
 	@Override
 	public List<Monitor> getMonitors() {
 		logger.debug("In getMonitors()");
-		List<CepMonitor> monitors = monitorRepository.getAllMonitors();
-		List<Monitor> monitorTypes = new ArrayList<Monitor>(monitors.size());
+		Iterable<CepMonitor> monitors = monitorRepository.findAll();
+		List<Monitor> monitorTypes = new ArrayList<Monitor>();//monitors.size());
 		for (CepMonitor monitor : monitors) {
 			monitorTypes.add(DomainUtil.toXmlType(monitor));
 		}
@@ -54,7 +64,7 @@ public class MonitorResourceImpl implements MonitorResource {
 	@Override
 	public Monitor getMonitor(Long monitorId) {
 		logger.debug("In getMonitor(" + monitorId + ")");
-		CepMonitor monitor = monitorRepository.getMonitorById(monitorId);
+		CepMonitor monitor = monitorRepository.findOne(toBigInteger(monitorId));
 		return DomainUtil.toXmlType(monitor);
 	}
 
@@ -64,7 +74,7 @@ public class MonitorResourceImpl implements MonitorResource {
 	@Override
 	public Monitor updateMonitor(Long monitorId, Monitor monitor) {
 		logger.debug("In updateMonitor(" + monitor + ")");
-		return DomainUtil.toXmlType(monitorRepository.updateMonitor(DomainUtil.toDomainType(monitor)));
+		return DomainUtil.toXmlType(monitorRepository.save(DomainUtil.toDomainType(monitor)));
 	}
 
 	/* (non-Javadoc)
@@ -73,7 +83,7 @@ public class MonitorResourceImpl implements MonitorResource {
 	@Override
 	public Monitor createMonitor(Monitor monitor) {
 		logger.debug("In createMonitor(" + monitor + ")");
-		return DomainUtil.toXmlType(monitorRepository.createMonitor(DomainUtil.toDomainType(monitor)));
+		return DomainUtil.toXmlType(monitorRepository.save(DomainUtil.toDomainType(monitor)));
 	}
 
 	/* (non-Javadoc)
@@ -82,7 +92,7 @@ public class MonitorResourceImpl implements MonitorResource {
 	@Override
 	public StatusResponse startMonitor(Long monitorId) {
 		logger.debug("In startMonitor(" + monitorId + ")");
-		CepMonitor monitor = monitorRepository.getMonitorById(monitorId);
+		CepMonitor monitor = monitorRepository.findOne(toBigInteger(monitorId));
 		monitorService.startMonitor(DomainUtil.toXmlType(monitor));
 		return StatusResponse.success();
 	}
@@ -93,7 +103,7 @@ public class MonitorResourceImpl implements MonitorResource {
 	@Override
 	public StatusResponse stopMonitor(Long monitorId) {
 		logger.debug("In stopMonitor(" + monitorId + ")");
-		CepMonitor monitor = monitorRepository.getMonitorById(monitorId);
+		CepMonitor monitor = monitorRepository.findOne(toBigInteger(monitorId));
 		monitorService.stopMonitor(DomainUtil.toXmlType(monitor));
 		return StatusResponse.success();
 	}
@@ -105,7 +115,7 @@ public class MonitorResourceImpl implements MonitorResource {
 	public StatusResponse removeMonitor(Long monitorId) {
 		logger.debug("In removeMonitor(" + monitorId + ")");
 		try{
-			monitorRepository.removeMonitor(monitorId);
+			monitorRepository.delete(toBigInteger(monitorId));
 		}
 		catch(RepositoryException re){
 			return StatusResponse.failure();
@@ -119,7 +129,7 @@ public class MonitorResourceImpl implements MonitorResource {
 	@Override
 	public List<Alert> getAlerts(Long monitorId) {
 		logger.debug("In getMonitorAlerts(" + monitorId + ")");
-		List<CepAlert> monitorAlerts = monitorRepository.getAllAlertsByMonitor(monitorId);
+		List<CepAlert> monitorAlerts = alertRepository.findByMonitor(toBigInteger(monitorId));
 		List<Alert> alerts = new ArrayList<Alert>(monitorAlerts.size());
 		for (CepAlert monitorAlert : monitorAlerts) {
 			alerts.add(DomainUtil.toXmlType(monitorAlert));
