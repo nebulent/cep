@@ -1,28 +1,27 @@
 package com.nebulent.cep.domain.model;
 
-import java.io.Serializable;
-import java.math.BigInteger;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+
+import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
  * @author Max Fedorov
  *
  */
 @Entity(name = "cep_alerts")
+@Document(collection="alerts")
 public class CepAlert extends CepBaseEntity {
 
-    /**/
-	private static final long serialVersionUID = 1L;
-	
-    @Column(name = "tenant_id", nullable = false)
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -8848992260158247100L;
+
+	@Column(name = "tenant_id", nullable = false)
 	private int tenantId;
     
     @ManyToOne(fetch = FetchType.LAZY)

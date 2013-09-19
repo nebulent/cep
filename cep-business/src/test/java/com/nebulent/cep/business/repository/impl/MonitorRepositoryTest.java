@@ -1,7 +1,6 @@
 package com.nebulent.cep.business.repository.impl;
 
 import java.io.UnsupportedEncodingException;
-import java.util.List;
 
 import nebulent.schema.software.cep.metadata._1.ConditionComparator;
 import nebulent.schema.software.cep.metadata._1.Criticality;
@@ -17,15 +16,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.oxm.Marshaller;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.nebulent.cep.domain.model.CepAlert;
 import com.nebulent.cep.domain.model.CepCondition;
 import com.nebulent.cep.domain.model.CepMonitor;
 import com.nebulent.cep.repository.AlertRepository;
 import com.nebulent.cep.repository.MonitorRepository;
-import com.nebulent.cep.repository.impl.JpaMonitorRepository;
 import com.nebulent.cep.utils.MarshallerUtils;
 
 /**

@@ -14,22 +14,29 @@
 		<module>cep-web</module>
 	</modules>
 	<properties>
-		<jaxb-api-version>2.1</jaxb-api-version>
-		<jaxb-runtime-version>2.1.5</jaxb-runtime-version>
-		<spring-version>3.2.0.RELEASE</spring-version>
-		<esper-version>4.6.0</esper-version>
+		<spring-version>3.2.1.RELEASE</spring-version>
+		<spring-security-version>3.1.0.RELEASE</spring-security-version>
+		<spring-ampq-version>1.2.0.RELEASE</spring-ampq-version>
+		<esper-version>4.9.0</esper-version>
 		<cxf-version>2.6.3</cxf-version>
-		<camel-version>2.10.2</camel-version>
+		<camel-version>2.12.0</camel-version>
 		<activemq-version>5.7.0</activemq-version>
-		<jackson-version>1.9.10</jackson-version>
-		<jsr311-api-version>1.1.1</jsr311-api-version>
-		<hibernate-core-version>3.4.0.GA</hibernate-core-version>
+		<jackson-version>1.9.11</jackson-version>
+		
+		<hibernate-version>3.6.10.Final</hibernate-version>
 		<mysql-version>5.1.22</mysql-version>
 		<slf4j-version>1.7.2</slf4j-version>
 		<log4j-version>1.2.12</log4j-version>
 		<struts2.version>2.3.8</struts2.version>
 		<freemarker-version>2.3.19</freemarker-version>
 		<joda-time-version>2.1</joda-time-version>
+		<junit-version>4.10</junit-version>
+		
+		<!-- MongoDB and Spring Data. -->
+        <spring.data.mongodb.version>1.2.1.RELEASE</spring.data.mongodb.version>
+        <mongo.java.driver.version>2.9.3</mongo.java.driver.version>
+        
+		<commons-collections-version>3.2.1</commons-collections-version>
 		<commons-lang-version>2.6</commons-lang-version>
 		<commons-logging-version>1.1.1</commons-logging-version>
 		<commons-io-version>1.4</commons-io-version>
@@ -58,15 +65,32 @@
 			</plugin>
 		</plugins>
 	</build>
+	
 	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.10</version>
-			<scope>test</scope>
-			<optional>true</optional>
-		</dependency>
-	</dependencies>
+        <!-- All for testing. -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${spring-version}</version>
+            <scope>test</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit-version}</version>
+            <scope>test</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${slf4j-version}</version>
+            <scope>test</scope>
+            <optional>true</optional>
+        </dependency>
+    </dependencies>
+    
 	<repositories>
 		<repository>
 			<id>ibiblio.org</id>

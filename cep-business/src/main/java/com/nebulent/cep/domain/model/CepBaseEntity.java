@@ -14,7 +14,12 @@ import com.nebulent.cep.utils.DomainUtil;
 @MappedSuperclass
 public class CepBaseEntity implements Serializable {
 
-    @Id
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -2701470544701863504L;
+	
+	@Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO)
 	protected BigInteger id;

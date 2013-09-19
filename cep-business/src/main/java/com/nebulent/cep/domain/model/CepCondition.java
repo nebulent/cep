@@ -1,6 +1,5 @@
 package com.nebulent.cep.domain.model;
 
-import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.Set;
@@ -9,9 +8,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -23,10 +19,12 @@ import javax.persistence.ManyToMany;
 @Entity(name = "cep_conditions")
 public class CepCondition extends CepBaseEntity {
 
-     /**/
-	private static final long serialVersionUID = 1L;
-	
-    @Column(name = "tenant_id", nullable = false)
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = -1403272818297560219L;
+
+	@Column(name = "tenant_id", nullable = false)
 	private int tenantId;
     
     @Column(name = "name", nullable = false, length = 256)

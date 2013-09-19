@@ -1,6 +1,5 @@
 package com.nebulent.cep.domain.model;
 
-import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -8,23 +7,26 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
  * @author Max Fedorov
  * 
  */
 @Entity(name = "cep_monitors")
+@Document(collection="monitors")
 public class CepMonitor extends CepBaseEntity {
 
-	/**/
-	private static final long serialVersionUID = 1L;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2362779825276717415L;
 
 	@Column(name = "tenant_id", nullable = false)
 	private int tenantId;
@@ -61,6 +63,7 @@ public class CepMonitor extends CepBaseEntity {
 	private Set<CepCondition> conditions = new HashSet<CepCondition>(0);
 	
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "monitor", cascade = { CascadeType.ALL })
+	@Transient
 	private Set<CepAlert> alerts = new HashSet<CepAlert>(0);
 
 	/**
