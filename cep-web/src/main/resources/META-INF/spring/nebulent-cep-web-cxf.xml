@@ -15,7 +15,7 @@
 			<ref bean="ajaxService" />
 		</jaxrs:serviceBeans>
 		<jaxrs:providers>
-			<bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+			<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
 		</jaxrs:providers>
 		<jaxrs:features>
 			<cxf:logging/>
@@ -30,21 +30,21 @@
     <jaxrs:client id="alertRestService" address="${rest.restServiceClient.uri}"
             serviceClass="com.nebulent.cep.service.resource.AlertResource" inheritHeaders="true">
         <jaxrs:providers>
-        	<bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+        	<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
         </jaxrs:providers>
     </jaxrs:client>
     
     <jaxrs:client id="monitorRestService" address="${rest.restServiceClient.uri}"
             serviceClass="com.nebulent.cep.service.resource.MonitorResource" inheritHeaders="true">
         <jaxrs:providers>
-        	<bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+        	<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
         </jaxrs:providers>
     </jaxrs:client>
     
     <jaxrs:client id="cepRestService" address="${rest.restServiceClient.uri}"
             serviceClass="com.nebulent.cep.service.resource.CepResource" inheritHeaders="true">
         <jaxrs:providers>
-        	<bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+        	<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
         </jaxrs:providers>
     </jaxrs:client>
 </beans>

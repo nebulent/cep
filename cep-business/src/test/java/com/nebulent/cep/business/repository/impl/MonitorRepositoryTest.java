@@ -1,6 +1,8 @@
 package com.nebulent.cep.business.repository.impl;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.Map;
 
 import nebulent.schema.software.cep.metadata._1.ConditionComparator;
 import nebulent.schema.software.cep.metadata._1.Criticality;
@@ -66,8 +68,28 @@ public class MonitorRepositoryTest {
 	@Test
     public void testGetAlerts() {
 		Iterable<CepAlert> alerts = alertRepository.findAll();
+		Map<String, Integer> result = new HashMap<String, Integer>();
+		
 		for (CepAlert alert : alerts) {
 			System.out.println(alert.getId() + "," + alert.getMessage());
+			
+			String key = alert.getMonitor().getName();
+			Integer count = result.get(key);
+			if (count == null) {
+				count = 0;
+			}
+			count++;
+			result.put(key, count);
+		}
+		
+		System.out.println("MMMMMMMMAAAAAAAAP:" + result);
+	}
+	
+	@Test
+    public void testGetMonitors() {
+		Iterable<CepMonitor> monitors = monitorRepository.findAll();
+		for (CepMonitor monitor : monitors) {
+			System.out.println("XXXXXXXXXXXXXXXXXXXXXX:" + monitor.getId() + "," + monitor.getName());
 		}
 	}
 	

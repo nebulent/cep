@@ -14,13 +14,14 @@ import nebulent.schema.software.cep.types._1.Alert;
 import nebulent.schema.software.cep.types._1.Monitor;
 
 import org.apache.commons.lang.RandomStringUtils;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 //@RunWith(SpringJUnit4ClassRunner.class)
 //@ContextConfiguration(locations = {"classpath:META-INF/spring/test-bonddesk-cep.xml"})

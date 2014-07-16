@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.nebulent.cep.repository;
+package com.nebulent.cep.repository.jpa;
 
 import java.util.ArrayList;
 import java.util.Collection;

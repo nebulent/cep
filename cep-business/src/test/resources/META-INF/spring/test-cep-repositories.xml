@@ -15,7 +15,7 @@
 	
 	<!-- ========================= Repositories ========================= -->
 	
-	<bean id="monitorRepository" class="com.nebulent.cep.repository.impl.JpaMonitorRepository" autowire="byName"/>
+	<bean id="monitorRepository" class="com.nebulent.cep.repository.jpa.impl.JpaMonitorRepository" autowire="byName"/>
 		
 </beans>
 

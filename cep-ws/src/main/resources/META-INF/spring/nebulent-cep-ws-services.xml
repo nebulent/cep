@@ -9,9 +9,13 @@
        http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd">
 	
 	<!-- ========================= Resources ========================= -->
-	<bean id="monitorResource" class="com.nebulent.cep.service.resource.impl.MonitorResourceImpl" autowire="byName"/>
-	<bean id="alertResource" class="com.nebulent.cep.service.resource.impl.AlertResourceImpl" autowire="byName"/>
-	<bean id="cepResource" class="com.nebulent.cep.service.resource.impl.CepResourceImpl" autowire="byName">
+	<bean id="monitorResource" class="com.nebulent.cep.service.resource.impl.MonitorResourceImpl" autowire="byType">
+	
+	</bean>
+	<bean id="alertResource" class="com.nebulent.cep.service.resource.impl.AlertResourceImpl" autowire="byType">
+	
+	</bean>
+	<bean id="cepResource" class="com.nebulent.cep.service.resource.impl.CepResourceImpl" autowire="byType">
 		<property name="camelContext" ref="camelContext"/>
         <property name="route" value="direct:processSyslogEvents"/>
 	</bean>
@@ -24,7 +28,7 @@
 			<ref bean="cepResource" />
 		</jaxrs:serviceBeans>
 		<jaxrs:providers>
-			<bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+			<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
 		</jaxrs:providers>
 		<jaxrs:features>
 			<cxf:logging/>
@@ -34,7 +38,7 @@
     <jaxrs:client id="restServiceClient" address="${rest.restServiceClient.uri}"
             serviceClass="com.nebulent.cep.service.resource.AlertResource" inheritHeaders="true">
         <jaxrs:providers>
-        	<bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+        	<bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
         </jaxrs:providers>
     </jaxrs:client>
 </beans>

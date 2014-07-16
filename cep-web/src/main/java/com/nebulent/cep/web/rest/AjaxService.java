@@ -10,6 +10,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.apache.commons.lang.StringUtils;
+
 import nebulent.schema.software.cep.types._1.Alert;
 
 import com.nebulent.cep.service.resource.AlertResource;
@@ -31,6 +33,9 @@ public class AjaxService {
 		List<Alert> alerts = alertResource.getAlerts();
 		for (Alert alert : alerts) {
 			String key = alert.getMonitor().getName();
+			if(StringUtils.isBlank(key)){
+				key = alert.getMonitor().getId() + ":" + alert.getMonitor().getConditionCode();
+			}
 			Integer count = result.get(key);
 			if (count == null) {
 				count = 0;

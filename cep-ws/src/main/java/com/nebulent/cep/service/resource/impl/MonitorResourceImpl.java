@@ -21,7 +21,7 @@ import com.nebulent.cep.domain.model.CepMonitor;
 import com.nebulent.cep.monitoring.service.MonitorService;
 import com.nebulent.cep.repository.AlertRepository;
 import com.nebulent.cep.repository.MonitorRepository;
-import com.nebulent.cep.repository.RepositoryException;
+import com.nebulent.cep.repository.jpa.RepositoryException;
 import com.nebulent.cep.service.resource.MonitorResource;
 import com.nebulent.cep.service.resource.response.StatusResponse;
 import com.nebulent.cep.utils.DomainUtil;
@@ -163,5 +163,19 @@ public class MonitorResourceImpl implements MonitorResource {
 	 */
 	public void setMonitorService(MonitorService monitorService) {
 		this.monitorService = monitorService;
+	}
+
+	/**
+	 * @return the alertRepository
+	 */
+	public AlertRepository getAlertRepository() {
+		return alertRepository;
+	}
+
+	/**
+	 * @param alertRepository the alertRepository to set
+	 */
+	public void setAlertRepository(AlertRepository alertRepository) {
+		this.alertRepository = alertRepository;
 	}
 }

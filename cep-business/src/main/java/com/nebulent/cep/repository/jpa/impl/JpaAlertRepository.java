@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.nebulent.cep.repository.impl;
+package com.nebulent.cep.repository.jpa.impl;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -12,8 +12,8 @@ import org.apache.commons.lang.StringUtils;
 
 import com.nebulent.cep.domain.model.CepAlert;
 import com.nebulent.cep.repository.AlertRepository;
-import com.nebulent.cep.repository.JpaAbstractRepository;
-import com.nebulent.cep.repository.RepositoryException;
+import com.nebulent.cep.repository.jpa.JpaAbstractRepository;
+import com.nebulent.cep.repository.jpa.RepositoryException;
 
 /**
  * @author mfedorov

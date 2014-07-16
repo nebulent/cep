@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.nebulent.cep.domain.model.CepAlert;
 import com.nebulent.cep.repository.AlertRepository;
-import com.nebulent.cep.repository.RepositoryException;
+import com.nebulent.cep.repository.jpa.RepositoryException;
 import com.nebulent.cep.service.resource.AlertResource;
 import com.nebulent.cep.service.resource.response.StatusResponse;
 import com.nebulent.cep.utils.DomainUtil;
@@ -30,9 +30,6 @@ import com.nebulent.cep.utils.DomainUtil;
 public class AlertResourceImpl implements AlertResource {
 
 	private Logger logger = LoggerFactory.getLogger(AlertResourceImpl.class);
-	
-//	private MonitorRepository monitorRepository;
-	
 	
 	@Autowired
 	private AlertRepository alertRepository;
@@ -93,5 +90,18 @@ public class AlertResourceImpl implements AlertResource {
 		logger.debug("In createAlert(" + alert + ")");
 		return DomainUtil.toXmlType(alertRepository.save(DomainUtil.toDomainType(alert)));
 	}
-	
+
+	/**
+	 * @return the alertRepository
+	 */
+	public AlertRepository getAlertRepository() {
+		return alertRepository;
+	}
+
+	/**
+	 * @param alertRepository the alertRepository to set
+	 */
+	public void setAlertRepository(AlertRepository alertRepository) {
+		this.alertRepository = alertRepository;
+	}
 }

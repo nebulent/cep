@@ -10,7 +10,7 @@
   </appender>
   
   <appender name="esperLogFile" class="org.apache.log4j.FileAppender">
-      <param name="File" value="../logs/esper.log" />
+      <param name="File" value="/tmp/esper.log" />
       <param name="Threshold" value="error" />
       <layout class="org.apache.log4j.PatternLayout">
           <param name="ConversionPattern" value="%d %-5p %F:%L - %m%n"/>

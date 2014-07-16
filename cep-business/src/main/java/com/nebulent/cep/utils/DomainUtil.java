@@ -151,7 +151,9 @@ public class DomainUtil {
     		return null;
     	}
     	Monitor meta = new Monitor();
-    	meta.setId(monitor.getId().longValue());
+    	if(monitor.getId() != null){
+    		meta.setId(monitor.getId().longValue());
+    	}
     	
     	if(setMonitor){
 	    	meta.setCriticalityTypeCode(monitor.getCriticalityTypeCode());
@@ -201,7 +203,9 @@ public class DomainUtil {
     		return null;
     	}
     	Condition conditionType = new Condition();
-    	conditionType.setId(condition.getId().longValue());
+    	if(condition.getId() != null){
+    		conditionType.setId(condition.getId().longValue());
+    	}
     	conditionType.setName(condition.getName());
     	conditionType.setExpression(condition.getDefinition());
     	return conditionType;
@@ -242,7 +246,9 @@ public class DomainUtil {
     		return null;
     	}
     	Alert alert = new Alert();
-    	alert.setId(alertEntity.getId().longValue());
+    	if(alertEntity.getId() != null){
+    		alert.setId(alertEntity.getId().longValue());
+    	}
     	alert.setChangeBy(alertEntity.getChangeBy());
     	if(alertEntity.getChangeDate() != null){
     		alert.setChangeDate(toCalendar(alertEntity.getChangeDate()));
