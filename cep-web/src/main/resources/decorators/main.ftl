@@ -38,6 +38,7 @@ ${head}
           <div class="nav-collapse collapse">
             <ul class="nav">
               <li class="active"><a href="${base}/dashboard">Dashboard</a></li>
+              <li><a href="${base}/schedules">Schedules</a></li>
               <li><a href="${base}/monitor">Monitors</a></li>
               <li><a href="${base}/alert">Alerts</a></li>
             </ul>
@@ -47,7 +48,7 @@ ${head}
     </div>
 
     <div class="container">
-    ${body}    
+    ${body}
 	</div>
 
 </body>
